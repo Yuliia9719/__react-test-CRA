@@ -1,39 +1,51 @@
-import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import { useEffect, useState } from "react";
+import { PostInterface } from "./types/PostInterface";
+import { fetchData } from "./utils/api";
 
-export interface PostInterface {
-  id: number;
-  title: string;
-  body: string;
-  userId: number;
-}
 function App() {
   const [posts, setPosts] = useState<PostInterface[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(
-        "https://jsonplaceholder.typicode.com/posts"
-      );
-      const data: PostInterface[] = await response.json();
-      setPosts(data);
+    const fetchDataAndHandleErrors = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await fetchData();
+        setPosts(data);
+        setIsLoading(false);
+      } catch (error) {
+        setError((error as Error).message);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    fetchData();
+    fetchDataAndHandleErrors();
   }, []);
   return (
     <div className="App">
-      <ul>
-        {posts.map((post: PostInterface) =>
-          <li key={post.id}>
-            <h3>
-              {post.title}
-            </h3>
-            <p>
-              {post.body}
-            </p>
-          </li>
-        )}
-      </ul>
+      <h1>Post title</h1>
+      {isLoading && <h4>Loading....</h4>}
+      {error &&
+        <h5>
+          {error}
+        </h5>}
+
+      {!isLoading &&
+        !error &&
+        posts.length &&
+        <ol>
+          {posts.map((post: PostInterface) =>
+            <li key={post.id}>
+              <h3>
+                {post.title}
+              </h3>
+              <p>
+                {post.body}
+              </p>
+            </li>
+          )}
+        </ol>}
     </div>
   );
 }

@@ -17,8 +17,8 @@ describe("App component", () => {
           },
           {
             id: 2,
-            title: " Post title 2",
-            body: "This is the body of post2",
+            title: "Post title 2",
+            body: "This is the body of post 2",
             userId: 2
           }
         ])
@@ -32,11 +32,11 @@ describe("App component", () => {
     render(<App />);
     expect(fetchMock).toHaveBeenCalledTimes(1);
 
-    const postTitles = await screen.findAllByText(/Post title [1-2]/i);
+    const postTitles = await screen.findAllByText(/Post title [1-2]i/);
     expect(postTitles.length).toBeGreaterThan(0);
 
     const postBodies = await screen.findAllByText(
-      /This is the body of post [1-2]/i
+      /This is the body of post [1-2]i/
     );
     expect(postTitles.length).toBeGreaterThan(0);
   });
