@@ -1,24 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import logo from "./logo.svg";
+import "./App.css";
 
+export interface PostInterface {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+}
 function App() {
+  const [posts, setPosts] = useState<PostInterface[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/posts"
+      );
+      const data: PostInterface[] = await response.json();
+      setPosts(data);
+    };
+    fetchData();
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ul>
+        {posts.map((post: PostInterface) =>
+          <li key={post.id}>
+            <h3>
+              {post.title}
+            </h3>
+            <p>
+              {post.body}
+            </p>
+          </li>
+        )}
+      </ul>
     </div>
   );
 }
